@@ -165,10 +165,13 @@ if __name__ == '__main__':
     ws = WordSearch(grid, ROW_LENGTH)
     result = ws.find_words(words_to_find)
 
-    
     expected = [True, False, False, True, False, False]
 
     assert result == expected, (
         f"failed, expected: {expected}, actual: {result}"
     )
     print("test passed")
+
+    for w, res in zip(words_to_find, result):
+        if res:
+            print(f"found {w}")
