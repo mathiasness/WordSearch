@@ -2,17 +2,17 @@
 
 ## Problem Overview
 
-- The grid consists of 10 000 * 10 000 lowercase letters (a - z), a total of 100 million letters.
+- The grid consists of 10,000 * 10,000 lowercase letters (a - z), a total of 100 million letters.
 - We need to check for the presence of 1 million words with an average length of 9 characters.
 - Check horizontally, from left to right and vertically from top to bottom
 
-## Key Challanges
+## Key Challenges
 
 1. Scale
     - Grid size 100 million characters
     - 1 million words
 2. Two-dimensional search
-    We must search both horizontally and vertically for 10 000 rows and 10 000 columns
+    We must search both horizontally and vertically for 10,000 rows and 10,000 columns
 3. Memory (we ignore this in this task)
 
 A single scan of the grid (horizontal and vertical) would be O(200 million).
@@ -23,22 +23,22 @@ The naive approach would be to traverse the grid for every word. The optimal app
 
 ### 1. Divide the Grid Into Rows and Columns
 
-- 10 000 rows-strings of 10 000 characters
-- 10 000 col-strings of 10 000 characters
+- 10,000 rows-strings of 10,000 characters
+- 10,000 col-strings of 10,000 characters
 
 ### 2. Use a Multi-pattern Search Algorithm
 
-The biggest performance gain comes from searching for all the words simountaenously. Essentially in linear time over the grid, rather than traversing the grid multiple times. To do this, I used the **Aho-Corasick** algorithm. 
+The biggest performance gain comes from searching for all the words simultaneously. Essentially in linear time over the grid, rather than traversing the grid multiple times. To do this, I used the **Aho-Corasick** algorithm. 
 
 **Aho-Corasick**
 
 - Build a finite state machine for all the words.
     - A trie of all the words we search for, and traverse this search tree when going through each row/col in the grid.
-- We sacrifice some time building the trie and its failure link (However considering 9 million < 200 million, this is reasonable).
+- We sacrifice some time building the trie and its failure link (However considering differences in size between the grid and the word list, this is reasonable).
 - After preprocessing (building the trie and links), we can run through each text (a row or a col) in O(text_length + num_matches)
 - In summary, we pay for construction cost of the 1 million word search tree once, and can then scan each row and col in linear time (if we look past the factor of occurrences).
 
-**Complexity**
+**Complexity of Aho-Corasick**
 
 - **n**, length of text
 - **m**, length of characters in all words
@@ -48,7 +48,7 @@ The biggest performance gain comes from searching for all the words simountaenou
 
 ### 3. Details of My Approach
 
-The grid, standard size row length of 10 000, but can be overwritten.
+The grid, standard size row length of 10,000, but can be overwritten.
 I chose to create the substring rows and cols already in the constructor, for easy reference.
 
 ```python
@@ -101,7 +101,7 @@ def find_words(self, words_to_find):
 
 ```
 
-My implementation conflicts with the structure in the task description. This is beacuse I identified the `is_present`- search the grid for every word approach as a bottleneck, which would result in poor performance. As I mentioned before, we ideally only traverse the grid once, beacuse of its size. However, if this is a requirement this could be achieved by some structural changes.
+My implementation conflicts with the structure in the task description. This is beacuse I identified the `is_present`- search the grid for every word approach as a bottleneck, which would result in poor performance. As I mentioned before, we ideally only traverse the grid once, beacuse of its size. However, if this is a requirement this could be achieved by some simple, structural changes.
 EX:
 - Store the results from find_words as a field variable
 - is_present checks the stored results
@@ -115,15 +115,14 @@ def is_present(self, word):
 ```
 
 **Aho-Corasick**
-The constructor for the AhoCorasick class takes the list of words as an argument, and then constructs the trie from those words. The base char is a, represented as 0 in this trie. The purpose this conversion is to make it the trie easy to work with, these digits then serve as both an index and a value. ex. if `c_idx = 1` and we type self.next[ current ] [ c_idx ] then we check the current node's "next" node 'b', -1 if this isn't a valid sequence. 
+
+The constructor for the `AhoCorasick` class takes a list of words as an argument, and then constructs the trie from those words. The base char is a, represented as 0. The purpose this conversion is to make it the trie easy to work with, these digits then serve as both an index and a value. ex. if `c_idx = 1` then `self.next[ current ] [ c_idx ]` looks up the current node's "next" node 'b', -1 if this isn't a valid sequence. 
 Each Node: 
 - next array, size 26 for all possible characters in the alphabet
 - a fail link, which points to the longest possible suffix, where we can continue the pattern matching.
 - an array `output` storing indexes which end at the given node.
 
-A better explaination and vizualization of the trie: https://www.geeksforgeeks.org/aho-corasick-algorithm-pattern-searching/ 
-
-**each node** 
+A more detailed explaination, and vizualization of the trie/automaton: https://www.geeksforgeeks.org/aho-corasick-algorithm-pattern-searching/ 
 
 ```python
 
@@ -268,7 +267,7 @@ def search(self, text):
 
 ### 4. Results
 
-I tested my solution on a grid with row length 10 000, and a word list of size 10 000. This workload, not quite the size of the task description, but still significant, resulted in runtimes around 140 seconds (on my personal computer, results may vary depending on RAM, CPU, etc.). Comparing to a naive approach; using Python's `in` feature (a worst case complexity of O(N*m), where N=size of grid, m=size of word list), for every word on every row and col, this resulted in runtimes around 600 seconds. This gap would only increase with an increasing workload.
+I tested my solution on a grid with row length 10,000, and a word list of size 10,000. This workload, not quite the size of the task description, but still significant, resulted in runtimes around 140 seconds (on my personal computer, results may vary depending on RAM, CPU, etc.). Comparing to a naive approach; using Python's `in` feature (a worst case complexity of O(N*m), where N=size of grid, m=size of word list), for every word on every row and col, this resulted in runtimes around 600 seconds. This gap would only increase with an increasing workload.
 
 ```python
 
