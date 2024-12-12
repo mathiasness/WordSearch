@@ -28,7 +28,7 @@ The naive approach would be to traverse the grid for every word. The optimal app
 
 ### 2. Use a Multi-pattern Search Algorithm
 
-The biggest performance gain comes from searching for all the words simultaneously. Essentially in linear time over the grid, rather than traversing the grid multiple times. To do this, I used the **Aho-Corasick** algorithm. 
+The biggest performance gain comes from searching for all the words simultaneously. Essentially in linear time over the grid, rather than traversing the grid multiple times. To do this, I used the **Aho-Corasick** algorithm. The Aho-Corasick algorithm allows for simoultaneous pattern searching as opposed to other algorithms like for example Boyer-Moore, which is more efficient when searching for a single pattern. The Aho-Corasick algorithm is extremely stable. It's average performance will tend to be close to its worst-case, but given the task description, the assumption that we prepare for worst-case is logical.
 
 **Aho-Corasick**
 
